@@ -88,10 +88,15 @@ const CovidDashboard = ({neighborData, selectedRegion}) => {
                     }, 2000)
                 )
                 .then((data) => {
-                    if (data.length > 0) {
-                        console.log("Fetched Result: ");
-                        console.log(data);
-                        setSelectedData(data[0]);
+                    if (data.length > 0) { // cleaning data
+                        let raw_data = Object.entries(data[0]);
+                        let row_names = ["Case Rate", "Total Population", "Raw Visit Count"];
+                        raw_data = raw_data.slice(5, 8);
+                        const cleaned_data = {};
+                        raw_data.forEach((entry, index)=> {
+                            cleaned_data[row_names[index]] = raw_data[index][1];
+                        });
+                        setSelectedData(cleaned_data);
                     } else {
                         setSelectedData(null);
                         setSnackbarOpen(true);
