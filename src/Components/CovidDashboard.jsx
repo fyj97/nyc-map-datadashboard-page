@@ -70,7 +70,7 @@ const CovidDashboard = ({neighborData, selectedRegion}) => {
             "Content-Type": "text/plain"
         }
         
-        const apiEndpoint = `https://backend2024.ddns.net/covid/zipcode_dates/?date=${encodeURIComponent(selectedDate)}&zip_code=${encodeURIComponent(autocompleteInput)}`;
+        const apiEndpoint = `https://ditectlab.civil.columbia.edu/covid/zipcode_dates/?date=${encodeURIComponent(selectedDate)}&zip_code=${encodeURIComponent(autocompleteInput)}`;
             
         console.log(apiEndpoint)
 
