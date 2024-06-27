@@ -17,27 +17,67 @@ const WeatherDashboard = () => {
   // Dummy data for autocomplete options
   const locations = [
     { label: 'New York, NY' },
-    { label: 'Brooklyn, NY' },
-    { label: 'Queens, NY' },
+    // { label: 'Brooklyn, NY' },
+    // { label: 'Queens, NY' },
+    // { label: 'Staten Island, NY'},
+    // { label: 'Bronx, NY'}
     // Add more locations as needed
   ];
+
+// maps location to unique id
+
+ let locId = new Map();
+
+ locId.set('New York, NY', 'GHCND:USW00094728')
+//  locId.set('Brooklyn, NY', 'GHCND:USC00300958');
+//  locId.set('Queens, NY', 'GHCND:US1NYQN0027');
+//  locId.set('Staten Island, NY', 'GHCND:US1NYRC0001');
+//  locId.set('Bronx, NY', 'GHCND:USC00300961');
 
   // State for selected location and date
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [weatherData, setWeatherData] = useState(null);
+  // const [error, setError] = useState(null);
 
-  // Dummy data for weather information
-  const weatherData = {
-    temperature: 72,
-    condition: 'Sunny',
-    // Add more weather data as needed
+  const apiKey = 'AmOsARuHzfwAOlHufYEEFaWzfwWkzXuf'; // Replace with your actual API token
+
+  const findValueByDatatype = (data, datatype) => {
+    const entry = data.results.find(result => result.datatype === datatype);
+    return entry ? entry.value : "N/A"; // Return value if entry found, otherwise null
   };
 
   // Function to handle button click
-  const handleFetchData = () => {
-    // You can perform API call here in the future
-    console.log('Fetching data for:', selectedLocation, selectedDate);
-    // For now, you can just log the selected location and date
+  const handleFetchData = async () => {
+    try {
+      const locationId = locId.get(selectedLocation.label);
+
+      if (!locationId || !selectedDate) {
+        console.error('Location or date not selected');
+        return;
+      }
+
+      const url = `https://www.ncei.noaa.gov/cdo-web/api/v2/data?datasetid=GHCND&stationid=${encodeURIComponent(locationId)}&startdate=${encodeURIComponent(selectedDate)}&enddate=${encodeURIComponent(selectedDate)}&units=standard&limit=100`;
+
+
+      console.log(url);
+      const response = await fetch(url, {
+        mode: 'cors',
+        method: 'GET',
+        headers: {
+          token: apiKey
+        }
+      });
+      const data = await response.json();
+      console.log(data);
+      if(data.results) {
+        console.log('test')
+        setWeatherData(data);
+      }
+
+    } catch (error) {
+      console.error('Fetch error:', error);
+    }
   };
 
   return (
@@ -55,14 +95,16 @@ const WeatherDashboard = () => {
                     <Autocomplete
                         options={locations}
                         getOptionLabel={(option) => option.label}
+                        value = {selectedLocation}
+                        onChange={(e, value) => {
+                          setSelectedLocation(value)
+                        }}
                         renderInput={(params) => (
                         <TextField
                             {...params}
                             label="Select Location"
                             fullWidth
-                            onChange={(e, value) => setSelectedLocation(value)}
-                        />
-                        )}
+                        />)}
                     />
                 </Grid>
 
@@ -87,7 +129,8 @@ const WeatherDashboard = () => {
             </Grid>
         </Paper>
       {/* Additional UI elements for displaying weather data */}
-      {selectedLocation && selectedDate && (
+      {weatherData && (
+        <div>
         <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
           <Typography variant="h6" gutterBottom>
             Weather Information
@@ -97,13 +140,20 @@ const WeatherDashboard = () => {
           </Typography>
           <Typography variant="body1">Date: {selectedDate}</Typography>
           <Typography variant="body1">
-            Temperature: {weatherData.temperature}°F
+            Max Temperature: {findValueByDatatype(weatherData, 'TMAX')}°F
           </Typography>
           <Typography variant="body1">
-            Condition: {weatherData.condition}
+            Min Temperature: {findValueByDatatype(weatherData, 'TMIN')}°F
+          </Typography>
+          <Typography variant="body1">
+            Rainfall: {findValueByDatatype(weatherData, 'PRCP')} inches
+          </Typography>
+          <Typography variant="body1">
+            Snowfall: {findValueByDatatype(weatherData, 'SNOW')} inches
           </Typography>
           {/* Add more weather information as needed */}
         </Paper>
+        </div>
       )}
     </Box>
   );
