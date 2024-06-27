@@ -71,7 +71,6 @@ const WeatherDashboard = () => {
       const data = await response.json();
       console.log(data);
       if(data.results) {
-        console.log('test')
         setWeatherData(data);
       }
 
@@ -129,7 +128,7 @@ const WeatherDashboard = () => {
             </Grid>
         </Paper>
       {/* Additional UI elements for displaying weather data */}
-      {weatherData && (
+      {weatherData && selectedLocation && selectedDate && (
         <div>
         <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
           <Typography variant="h6" gutterBottom>
