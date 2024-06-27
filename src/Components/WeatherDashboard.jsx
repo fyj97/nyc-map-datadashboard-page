@@ -17,28 +17,18 @@ const WeatherDashboard = () => {
   // Dummy data for autocomplete options
   const locations = [
     { label: 'New York, NY' },
-    // { label: 'Brooklyn, NY' },
-    // { label: 'Queens, NY' },
-    // { label: 'Staten Island, NY'},
-    // { label: 'Bronx, NY'}
     // Add more locations as needed
   ];
 
 // maps location to unique id
 
  let locId = new Map();
-
  locId.set('New York, NY', 'GHCND:USW00094728')
-//  locId.set('Brooklyn, NY', 'GHCND:USC00300958');
-//  locId.set('Queens, NY', 'GHCND:US1NYQN0027');
-//  locId.set('Staten Island, NY', 'GHCND:US1NYRC0001');
-//  locId.set('Bronx, NY', 'GHCND:USC00300961');
 
   // State for selected location and date
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
   const [weatherData, setWeatherData] = useState(null);
-  // const [error, setError] = useState(null);
 
   const apiKey = 'AmOsARuHzfwAOlHufYEEFaWzfwWkzXuf'; // Replace with your actual API token
 
